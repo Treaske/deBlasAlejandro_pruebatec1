@@ -25,7 +25,7 @@ public class ControladorPersistencia {
     }
 
     public boolean findEmpleadoId(int id){ return empladoJPA.findEmpleadoId(id); }
-    
+
     //Mostrar toda la lista de empleados en lugar de solo uno
     public List<Empleados> findEmpleadosList() {
         return empladoJPA.findEmpleadosList();
