@@ -1,6 +1,7 @@
 package org.example.persistencia;
 
 import org.example.logica.Empleados;
+import org.example.persistencia.excepciones.NonexistentEntityException;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -16,7 +17,7 @@ public class ControladorPersistencia {
         empladoJPA.create(empleado);
     }
 
-    public void eliminarEmpleado(int id){
+    public void eliminarEmpleado(int id) throws NonexistentEntityException {
         empladoJPA.destroy(id);
     }
 

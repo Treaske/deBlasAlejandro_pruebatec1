@@ -3,10 +3,7 @@ package org.example.persistencia;
 import org.example.logica.Empleados;
 import org.example.persistencia.excepciones.NonexistentEntityException;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -28,20 +25,38 @@ public class EmpleadoJPAController {
     //Crear empleado
     public void create(Empleados empleado){
         EntityManager em = null;
-        em = getEntityManager();
-        em.getTransaction().begin();
-        em.persist(empleado);
-        em.getTransaction().commit();
+        try {
+            em = getEntityManager();
+            em.getTransaction().begin();
+            em.persist(empleado);
+            em.getTransaction().commit();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
     }
 
     //Borrar empleado
-    public void destroy(int id){
+    public void destroy(int id) throws NonexistentEntityException{
         EntityManager em = null;
-        em = getEntityManager();
-        em.getTransaction().begin();
-        Empleados empleado = em.find(Empleados.class, id);
-        em.remove(empleado);
-        em.getTransaction().commit();
+        try {
+            em = getEntityManager();
+            em.getTransaction().begin();
+            Empleados empleado;
+            try {
+                empleado = em.getReference(Empleados.class, id);
+                empleado.getId();
+            } catch (EntityNotFoundException enfe) {
+                throw new NonexistentEntityException("El empleado con " + id + " no existe", enfe);
+            }
+            em.remove(empleado);
+            em.getTransaction().commit();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
     }
 
     //Editar empleado, protegiendo el programa mediante una exepcion si no existe el id aportado
@@ -107,6 +122,7 @@ public class EmpleadoJPAController {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<Empleados> cq = cb.createQuery(Empleados.class);
+            //se debe utilizar root, debido a que el Criteria Builder no soporta listas
             Root<Empleados> empleado = cq.from(Empleados.class);
 
             // Agrega una condición para filtrar por el cargo específico
