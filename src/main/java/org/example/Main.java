@@ -3,12 +3,11 @@ package org.example;
 import org.example.logica.Empleados;
 import org.example.persistencia.ControladorPersistencia;
 
-import java.util.Date;
+import java.awt.*;
+import java.util.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws ClassNotFoundException, ParseException {
@@ -32,6 +31,7 @@ public class Main {
 
         int flag;
         int id;
+        String cargo;
 
         flag = 1;
         id = 0;
@@ -43,7 +43,7 @@ public class Main {
 
         while(flag > 0){
             //Menu de seleccion
-            System.out.println("Que operacion desea realizar? \n Seleccione el numero\n 1 - Añadir Empleado\n 2 - Borrar Empleado\n 3 - Buscar Empleados\n 4 - Mostar Lista Empleados\n 5 - Editar Empleado\n 0 - Salir");
+            System.out.println("Que operacion desea realizar? \n Seleccione el numero\n 1 - Añadir Empleado\n 2 - Borrar Empleado\n 3 - Buscar Empleados\n 4 - Mostar Lista Empleados\n 5 - Editar Empleado\n 6 - Buscar por Cargo \n 0 - Salir");
             flag = scanner.nextInt();
             switch (flag) {
                 case 1:
@@ -118,6 +118,23 @@ public class Main {
                         empleado = modificarEmpleadoUsuario(empleado);
                         System.out.println("\nEl usuario de id: " + id + " ha sido modificado\n Modificaciones: ");
                         System.out.println("\nID: " + empleado.getId() + "\nNombre: " + empleado.getNombre() + "\nApellido: " + empleado.getApellido() + "\nCargo: " + empleado.getCargo() + "\nSalario: " + empleado.getSalario() + "\nFecha de Inicio: " + empleado.getFechaInicio() + "\n");
+                    }
+                    break;
+                case 6:
+                    System.out.println("+++ Buscar por Cargo +++");
+
+                    System.out.println(" - Indicar el cargo del usuario que desea buscar");
+                    cargo = scanner.next();
+
+                    System.out.println("Lista de empleados de cargo " + cargo);
+                    List<Empleados> empleadosConCargo = controlador.findEmpleadosListCargo(cargo);
+                    if (empleadosConCargo.isEmpty()){
+                        System.out.println("El cargo selecionado no existe o no hay ningun empleado en ese cargo\n");
+                    }else{
+                        for (Empleados empleados : empleadosConCargo) {
+                            System.out.println("----- Empleado " + empleados.getId() + " -----");
+                            System.out.println("\nNombre: " + empleados.getNombre() + "\nApellido: " + empleados.getApellido() + "\nCargo: " + empleados.getCargo() + "\nSalario: " + empleados.getSalario() + "\nFecha de Inicio: " + empleados.getFechaInicio() + "\n");
+                        }
                     }
                     break;
                 case 0:

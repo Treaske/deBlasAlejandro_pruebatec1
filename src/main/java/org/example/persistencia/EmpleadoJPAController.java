@@ -7,7 +7,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 public class EmpleadoJPAController {
@@ -98,6 +100,25 @@ public class EmpleadoJPAController {
             em.close();
         }
     }
+
+    //Mostrar solo los de cargo especifico
+    public List<Empleados> findEmpleadosListCargo(String cargo) {
+        EntityManager em = getEntityManager();
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Empleados> cq = cb.createQuery(Empleados.class);
+            Root<Empleados> empleado = cq.from(Empleados.class);
+
+            // Agrega una condición para filtrar por el cargo específico
+            cq.select(empleado).where(cb.equal(empleado.get("cargo"), cargo));
+
+            Query q = em.createQuery(cq);
+            return q.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
 
     //Metodo que se usara para encontrar el ultimo id y sumar uno para añadir un nuevo usuario
     public int findLastIdEmpleado(){
